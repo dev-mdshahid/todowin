@@ -23,32 +23,32 @@ const Login = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit((data: FieldValues) => onSubmit(data))}>
-      <Card className="p-4">
-        <CardHeader>
-          <CardTitle>Login to your account!</CardTitle>
-          <CardDescription>
-            Enter your email and password to login!
-          </CardDescription>
-        </CardHeader>
+    <Card className="p-4">
+      <CardHeader>
+        <CardTitle>Login to your account!</CardTitle>
+        <CardDescription>
+          Enter your email and password to login!
+        </CardDescription>
+      </CardHeader>
 
-        <CardContent className="grid gap-3">
-          {/* Google and github options */}
-          <div className="flex gap-2 child:w-full">
-            <Button variant="outline" className="flex items-center gap-1">
-              <AiOutlineGoogle className={"text-xl"} />
-              Google
-            </Button>
-            <Button variant="outline" className="flex items-center gap-1">
-              <AiOutlineGithub className={"text-xl"} />
-              Github
-            </Button>
-          </div>
+      <CardContent className="grid gap-3">
+        {/* Google and github options */}
+        <div className="flex gap-2 child:w-full">
+          <Button variant="outline" className="flex items-center gap-1">
+            <AiOutlineGoogle className={"text-xl"} />
+            Google
+          </Button>
+          <Button variant="outline" className="flex items-center gap-1">
+            <AiOutlineGithub className={"text-xl"} />
+            Github
+          </Button>
+        </div>
 
-          <Divider text={"OR CONTINUE WITH"} />
+        <Divider text={"OR CONTINUE WITH"} />
 
-          {/* Input fields */}
-          <div className="space-y-2">
+        {/* Input fields */}
+        <form onSubmit={handleSubmit((data: FieldValues) => onSubmit(data))}>
+          <div className="mb-3 space-y-2">
             <Label htmlFor="email">Email Address</Label>
             <Input
               {...register("email")}
@@ -70,15 +70,15 @@ const Login = () => {
               id="password"
             />
           </div>
-        </CardContent>
+        </form>
+      </CardContent>
 
-        <CardFooter>
-          <Button type="submit" className="w-full">
-            Login
-          </Button>
-        </CardFooter>
-      </Card>
-    </form>
+      <CardFooter>
+        <Button type="submit" className="w-full">
+          Login
+        </Button>
+      </CardFooter>
+    </Card>
   );
 };
 

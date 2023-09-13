@@ -21,32 +21,32 @@ const Register = () => {
     console.log(data);
   };
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Card className="p-4">
-        <CardHeader>
-          <CardTitle>Create an account!</CardTitle>
-          <CardDescription>
-            Enter your basic info to create an account!
-          </CardDescription>
-        </CardHeader>
+    <Card className="p-4">
+      <CardHeader>
+        <CardTitle>Create an account!</CardTitle>
+        <CardDescription>
+          Enter your basic info to create an account!
+        </CardDescription>
+      </CardHeader>
 
-        {/* Google and github options */}
-        <CardContent className="grid gap-3">
-          <div className="flex gap-2 child:w-full">
-            <Button variant="outline" className="flex items-center gap-1">
-              <AiOutlineGoogle className={"text-xl"} />
-              Google
-            </Button>
-            <Button variant="outline" className="flex items-center gap-1">
-              <AiOutlineGithub className={"text-xl"} />
-              Github
-            </Button>
-          </div>
+      {/* Google and github options */}
+      <CardContent className="grid gap-3">
+        <div className="flex gap-2 child:w-full">
+          <Button variant="outline" className="flex items-center gap-1">
+            <AiOutlineGoogle className={"text-xl"} />
+            Google
+          </Button>
+          <Button variant="outline" className="flex items-center gap-1">
+            <AiOutlineGithub className={"text-xl"} />
+            Github
+          </Button>
+        </div>
 
-          <Divider text={"OR CONTINUE WITH"} />
+        <Divider text={"OR CONTINUE WITH"} />
 
-          {/* Input fields */}
-          <div className="flex gap-2">
+        {/* Input fields */}
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="mb-3 flex gap-2">
             <div className="space-y-2">
               <Label htmlFor="firstName">First name</Label>
               <Input
@@ -68,7 +68,7 @@ const Register = () => {
             </div>
           </div>
 
-          <div className="space-y-2">
+          <div className="mb-3 space-y-2">
             <Label htmlFor="email">Email Address</Label>
             <Input
               {...register("email")}
@@ -90,15 +90,15 @@ const Register = () => {
               id="password"
             />
           </div>
-        </CardContent>
+        </form>
+      </CardContent>
 
-        <CardFooter>
-          <Button type="submit" className="w-full">
-            Register
-          </Button>
-        </CardFooter>
-      </Card>
-    </form>
+      <CardFooter>
+        <Button type="submit" className="w-full">
+          Register
+        </Button>
+      </CardFooter>
+    </Card>
   );
 };
 
