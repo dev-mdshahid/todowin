@@ -7,3 +7,8 @@ It is going to be fully featured application built with nextJS. Following are th
 3. TailwindCSS
 4. Shadcn/ui
 5. React icons
+
+<!-- Todo -->
+
+1. Add loading state while registering
+2. Refactor and comment auth codes (if necessary)

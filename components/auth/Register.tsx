@@ -1,6 +1,6 @@
 "use client";
-import React from "react";
-import { FieldValues, useForm } from "react-hook-form";
+import React, { useRef, useState } from "react";
+
 import {
   Card,
   CardContent,
@@ -14,12 +14,59 @@ import { Label } from "../ui/label";
 import { Button } from "../ui/button";
 import { AiOutlineGithub, AiOutlineGoogle } from "react-icons/ai";
 import Divider from "../shared/Divider";
+import createUser from "@/actions/createUser";
+import { useToast } from "../ui/use-toast";
+import { ToastAction } from "../ui/toast";
+import { signIn } from "next-auth/react";
 
 const Register = () => {
-  const { register, handleSubmit } = useForm();
-  const onSubmit = (data: FieldValues) => {
-    console.log(data);
+  const formRef = useRef<HTMLFormElement>(null);
+  const [disabled, setDisabled] = useState(false);
+  const { toast } = useToast();
+
+  // form handler function
+  const handleSubmit = async (formData: FormData) => {
+    try {
+      const response = await createUser(formData);
+      if (response) {
+        if (response.isCreated) {
+          toast({
+            title: "Congratulations!",
+            description: "Account created successfully.",
+            action: <ToastAction altText="hide">Hide</ToastAction>,
+          });
+          signIn("credentials", {
+            email: response.user?.email,
+            password: response.user?.password,
+          });
+        } else {
+          toast({
+            variant: "destructive",
+            title: response.title,
+            description: response.description,
+            action: <ToastAction altText="hide">Hide</ToastAction>,
+          });
+        }
+      }
+    } catch (error) {
+      setDisabled(false);
+      console.log(error);
+      toast({
+        variant: "destructive",
+        title: "Netowrk error!",
+        description: error?.message,
+        action: (
+          <ToastAction
+            onClick={() => formRef.current?.requestSubmit()}
+            altText="try again"
+          >
+            Try again
+          </ToastAction>
+        ),
+      });
+    }
   };
+
   return (
     <Card className="p-4">
       <CardHeader>
@@ -30,13 +77,23 @@ const Register = () => {
       </CardHeader>
 
       {/* Google and github options */}
+
       <CardContent className="grid gap-3">
         <div className="flex gap-2 child:w-full">
-          <Button variant="outline" className="flex items-center gap-1">
+          <Button
+            onClick={() => signIn("google")}
+            variant="outline"
+            className="flex items-center gap-1"
+          >
             <AiOutlineGoogle className={"text-xl"} />
             Google
           </Button>
-          <Button variant="outline" className="flex items-center gap-1">
+
+          <Button
+            onClick={() => signIn("github")}
+            variant="outline"
+            className="flex items-center gap-1"
+          >
             <AiOutlineGithub className={"text-xl"} />
             Github
           </Button>
@@ -45,12 +102,19 @@ const Register = () => {
         <Divider text={"OR CONTINUE WITH"} />
 
         {/* Input fields */}
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form
+          action={(data) => {
+            handleSubmit(data);
+          }}
+          method="POST"
+          encType="application/x-www-form-urlencoded"
+          ref={formRef}
+        >
           <div className="mb-3 flex gap-2">
             <div className="space-y-2">
               <Label htmlFor="firstName">First name</Label>
               <Input
-                {...register("firstName")}
+                name="firstName"
                 required={true}
                 type="text"
                 placeholder="Ex. Md Shahidul"
@@ -60,7 +124,7 @@ const Register = () => {
             <div className="space-y-2">
               <Label htmlFor="lastName">Last name</Label>
               <Input
-                {...register("lastName")}
+                name="lastName"
                 type="text"
                 placeholder="Ex. Islam"
                 id="lastName"
@@ -71,7 +135,7 @@ const Register = () => {
           <div className="mb-3 space-y-2">
             <Label htmlFor="email">Email Address</Label>
             <Input
-              {...register("email")}
+              name="email"
               required={true}
               type="email"
               placeholder="Ex. mdshahidulridoy@gmail.com"
@@ -83,7 +147,7 @@ const Register = () => {
               Password
             </Label>
             <Input
-              {...register("password")}
+              name="password"
               required={true}
               type="password"
               placeholder="Enter your password"
@@ -94,8 +158,15 @@ const Register = () => {
       </CardContent>
 
       <CardFooter>
-        <Button type="submit" className="w-full">
-          Register
+        <Button
+          disabled={disabled}
+          type="submit"
+          className="w-full"
+          onClick={() => {
+            formRef.current?.requestSubmit();
+          }}
+        >
+          {disabled ? "Submitting ..." : "Register"}
         </Button>
       </CardFooter>
     </Card>

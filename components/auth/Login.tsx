@@ -1,6 +1,5 @@
 "use client";
-import React from "react";
-import { FieldValue, FieldValues, useForm } from "react-hook-form";
+import React, { useRef, useState } from "react";
 import {
   Card,
   CardContent,
@@ -9,18 +8,58 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
+
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { AiOutlineGithub, AiOutlineGoogle } from "react-icons/ai";
 import Divider from "../shared/Divider";
+import { signIn } from "next-auth/react";
+import { useForm } from "react-hook-form";
+import { toast } from "../ui/use-toast";
+import { ToastAction } from "../ui/toast";
+import { useRouter } from "next/navigation";
 
 const Login = () => {
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const [disabled, setDisabled] = useState(false);
+  const router = useRouter();
   const { register, handleSubmit } = useForm();
 
-  const onSubmit = (data: FieldValues) => {
-    console.log(data);
-  };
+  const onSubmit = handleSubmit(async (data) => {
+    setDisabled(true);
+    const res = await signIn("credentials", {
+      email: data.email,
+      password: data.password,
+      redirect: false,
+    });
+    if (res?.url) {
+      toast({
+        title: "Logged In successfully!",
+        action: <ToastAction altText="hide">Hide</ToastAction>,
+      });
+      router.push("/");
+    } else {
+      setDisabled(false);
+      toast({
+        variant: "destructive",
+        title:
+          res?.error === "CredentialsSignin"
+            ? "Wrong Credentials!"
+            : res?.error,
+        action: (
+          <ToastAction
+            onClick={() =>
+              res?.error !== "CredentialsSignin" ? btnRef.current?.click() : ""
+            }
+            altText="try again"
+          >
+            Try Again!
+          </ToastAction>
+        ),
+      });
+    }
+  });
 
   return (
     <Card className="p-4">
@@ -34,11 +73,20 @@ const Login = () => {
       <CardContent className="grid gap-3">
         {/* Google and github options */}
         <div className="flex gap-2 child:w-full">
-          <Button variant="outline" className="flex items-center gap-1">
+          <Button
+            onClick={() => signIn("google")}
+            variant="outline"
+            className="flex items-center gap-1"
+          >
             <AiOutlineGoogle className={"text-xl"} />
             Google
           </Button>
-          <Button variant="outline" className="flex items-center gap-1">
+
+          <Button
+            onClick={() => signIn("github")}
+            variant="outline"
+            className="flex items-center gap-1"
+          >
             <AiOutlineGithub className={"text-xl"} />
             Github
           </Button>
@@ -47,7 +95,7 @@ const Login = () => {
         <Divider text={"OR CONTINUE WITH"} />
 
         {/* Input fields */}
-        <form onSubmit={handleSubmit((data: FieldValues) => onSubmit(data))}>
+        <form onSubmit={onSubmit}>
           <div className="mb-3 space-y-2">
             <Label htmlFor="email">Email Address</Label>
             <Input
@@ -63,19 +111,29 @@ const Login = () => {
               Password
             </Label>
             <Input
-              {...register("passowrd")}
+              {...register("password")}
               required={true}
               type="password"
               placeholder="Enter your password"
               id="password"
             />
           </div>
+          <button ref={btnRef} type="submit" className="hidden">
+            Submit
+          </button>
         </form>
       </CardContent>
 
       <CardFooter>
-        <Button type="submit" className="w-full">
-          Login
+        <Button
+          disabled={disabled}
+          type="submit"
+          className="w-full"
+          onClick={() => {
+            btnRef.current?.click();
+          }}
+        >
+          {disabled ? "Logging in ..." : "Login"}
         </Button>
       </CardFooter>
     </Card>
