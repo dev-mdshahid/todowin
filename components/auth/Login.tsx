@@ -94,7 +94,7 @@ const Login = () => {
 
         <Divider text={"OR CONTINUE WITH"} />
 
-        {/* Input fields */}
+        {/* Login with credentials */}
         <form onSubmit={onSubmit}>
           <div className="mb-3 space-y-2">
             <Label htmlFor="email">Email Address</Label>
