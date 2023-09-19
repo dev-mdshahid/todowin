@@ -1,5 +1,6 @@
 "use server";
-import clientPromise from "@/lib/mongoClient";
+
+import { usersCollection } from "@/lib/mongoClient";
 import bcrypt from "bcrypt";
 const createUser = async (formData: FormData) => {
   const userInfo = {
@@ -14,12 +15,11 @@ const createUser = async (formData: FormData) => {
     const hashedPassword = await bcrypt.hash(userInfo.password, 10);
 
     // Mongodb
-    const mongo = await clientPromise;
-    const db = mongo.db("TodoWin");
-    const usersCursor = db.collection("users");
 
     // Checking if there's a user with the same email
-    const existingUser = await usersCursor.findOne({ email: userInfo.email });
+    const existingUser = await usersCollection.findOne({
+      email: userInfo.email,
+    });
 
     if (existingUser) {
       return {
@@ -28,7 +28,7 @@ const createUser = async (formData: FormData) => {
         description: "Try logging in instead.",
       };
     } else {
-      await usersCursor.insertOne({
+      await usersCollection.insertOne({
         ...userInfo,
         password: hashedPassword,
       });

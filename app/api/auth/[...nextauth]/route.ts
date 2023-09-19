@@ -1,9 +1,9 @@
 import NextAuth from "next-auth";
-import clientPromise from "@/lib/mongoClient";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
+import { usersCollection } from "@/lib/mongoClient";
 
 const authOptions = {
   providers: [
@@ -51,10 +51,7 @@ const authOptions = {
         if (credentials?.email && credentials?.password) {
           // Any object returned will be saved in `user` property of the JWT
           try {
-            const mongo = await clientPromise;
-            const db = mongo.db("TodoWin");
-            const usersCursor = db.collection("users");
-            const found = await usersCursor.findOne({
+            const found = await usersCollection.findOne({
               email: credentials?.email,
             });
             if (found) {
