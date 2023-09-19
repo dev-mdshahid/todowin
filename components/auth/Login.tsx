@@ -44,9 +44,9 @@ const Login = () => {
       toast({
         variant: "destructive",
         title:
-          res?.error === "CredentialsSignin"
-            ? "Wrong Credentials!"
-            : res?.error,
+          res?.error && res?.error !== "CredentialsSignin"
+            ? res?.error
+            : "Wrong Credentials!",
         action: (
           <ToastAction
             onClick={() =>
