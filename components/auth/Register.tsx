@@ -1,5 +1,6 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
+import { experimental_useFormStatus as useFormStatus } from "react-dom";
 
 import {
   Card,
@@ -21,7 +22,6 @@ import { signIn } from "next-auth/react";
 
 const Register = () => {
   const formRef = useRef<HTMLFormElement>(null);
-  const [disabled, setDisabled] = useState(false);
   const { toast } = useToast();
 
   // form handler function
@@ -49,7 +49,6 @@ const Register = () => {
         }
       }
     } catch (error: any) {
-      setDisabled(false);
       console.log(error);
       const { message } = error;
       toast({
@@ -155,23 +154,21 @@ const Register = () => {
               id="password"
             />
           </div>
+          <SubmitButton />
         </form>
       </CardContent>
-
-      <CardFooter>
-        <Button
-          disabled={disabled}
-          type="submit"
-          className="w-full"
-          onClick={() => {
-            formRef.current?.requestSubmit();
-          }}
-        >
-          {disabled ? "Submitting ..." : "Register"}
-        </Button>
-      </CardFooter>
     </Card>
   );
 };
 
 export default Register;
+
+const SubmitButton = () => {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button disabled={pending} type="submit" className="mt-6 w-full">
+      {pending ? "Submitting..." : "Register"}
+    </Button>
+  );
+};

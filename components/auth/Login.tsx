@@ -28,12 +28,17 @@ const Login = () => {
 
   const onSubmit = handleSubmit(async (data) => {
     setDisabled(true);
+
+    // Calling nextauth signIn function
     const res = await signIn("credentials", {
       email: data.email,
       password: data.password,
       redirect: false,
     });
-    if (res?.url) {
+
+    // Now showing toast based on response and redirecting
+    if (res?.url || !res) {
+      // success
       toast({
         title: "Logged In successfully!",
         action: <ToastAction altText="hide">Hide</ToastAction>,
@@ -41,6 +46,7 @@ const Login = () => {
       router.push("/");
     } else {
       setDisabled(false);
+      // error
       toast({
         variant: "destructive",
         title:

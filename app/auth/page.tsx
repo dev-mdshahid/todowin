@@ -8,7 +8,7 @@ const Auth = async () => {
   const session = await getServerSession();
   if (session) redirect("/");
   return (
-    <div className="flex h-screen w-screen items-center p-10">
+    <div className="flex h-screen w-screen items-center p-4">
       <Tabs defaultValue="login" className="mx-auto w-full max-w-[400px] ">
         <TabsList className="w-full child:w-full">
           <TabsTrigger value="login">Login</TabsTrigger>
