@@ -48,13 +48,14 @@ const Register = () => {
           });
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       setDisabled(false);
       console.log(error);
+      const { message } = error;
       toast({
         variant: "destructive",
         title: "Netowrk error!",
-        description: error?.message,
+        description: message,
         action: (
           <ToastAction
             onClick={() => formRef.current?.requestSubmit()}
